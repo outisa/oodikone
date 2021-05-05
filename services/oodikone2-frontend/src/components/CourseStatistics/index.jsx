@@ -15,6 +15,7 @@ import { clearCourseStats } from '../../redux/coursestats'
 import { getUserRoles, checkUserAccess } from '../../common'
 import { userHasAccessToAllCourseStats } from './courseStatisticsUtils'
 import TSA from '../../common/tsa'
+import Tour from '../Tour'
 
 const ANALYTICS_CATEGORY = 'Course Statistics'
 const sendAnalytics = (action, name, value) => TSA.Matomo.sendEvent(ANALYTICS_CATEGORY, action, name, value)
@@ -39,6 +40,7 @@ const CourseStatistics = props => {
     diffIsEmpty
   } = props
 
+  const [runTour, setRunTour] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selected, setSelected] = useState(initCourseCode)
   const [showDiff, setShowDiff] = useState(false)
@@ -82,7 +84,8 @@ const CourseStatistics = props => {
         ...panes,
         {
           menuItem: MENU.FACULTY,
-          render: () => <FacultyLevelStatistics />
+          render: () => <FacultyLevelStatistics />,
+          className: 'faculty'
         }
       ]
     }
@@ -147,6 +150,7 @@ const CourseStatistics = props => {
       <Header className="segmentTitle" size="large">
         Course Statistics
       </Header>
+      {process.env.NODE_ENV === 'development' && <Tour />}
       <Segment className="contentSegment">
         {getContent()}
         <ProgressBar fixed progress={progress} />
@@ -188,4 +192,9 @@ const mapStateToProps = ({
   }
 }
 
-export default withRouter(connect(mapStateToProps, { clearCourseStats })(CourseStatistics))
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { clearCourseStats }
+  )(CourseStatistics)
+)

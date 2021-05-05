@@ -101,12 +101,7 @@ const SingleCourseStats = ({
   const setExcludedToComparison = () => setComparison(primary.includes(ALL.value) ? [] : ['EXCLUDED'])
 
   const getExcluded = () =>
-    primary.includes(ALL.value)
-      ? []
-      : difference(
-          programmes.map(p => p.value).filter(v => v !== ALL.value),
-          primary
-        )
+    primary.includes(ALL.value) ? [] : difference(programmes.map(p => p.value).filter(v => v !== ALL.value), primary)
 
   const belongsToAtLeastOneProgramme = codes => {
     if (codes.includes(ALL.value)) return () => true
@@ -332,7 +327,7 @@ const SingleCourseStats = ({
 
   return (
     <div>
-      <Segment>
+      <Segment className="tour-time-range">
         <Form>
           <Header as="h4">Statistics by time range</Header>
           <YearFilter years={filteredYears} fromYear={fromYear} toYear={toYear} handleChange={handleYearChange} />
@@ -364,7 +359,7 @@ const SingleCourseStats = ({
                   onChange={handleSelect}
                 />
               </Grid.Column>
-              <Grid.Column width={8}>
+              <Grid.Column width={8} className="tour-comparison-group">
                 <ProgrammeDropdown
                   name="comparison"
                   options={comparisonProgrammes(options)}
@@ -462,4 +457,9 @@ const mapDispatchToProps = {
   getMaxYearsToCreatePopulationFrom
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SingleCourseStats))
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(SingleCourseStats)
+)

@@ -105,7 +105,7 @@ const AttemptsTable = ({
           {s.name}
           {s.name === 'Total' && !userHasAccessToAllStats && <strong>*</strong>}
           {s.name !== 'Total' && userHasAccessToAllStats && (
-            <Item as={Link} to={showPopulation(s.code, s.name, s)}>
+            <Item as={Link} to={showPopulation(s.code, s.name, s)} className="tour-arrow-upwards">
               <Icon name="level up alternate" />
             </Item>
           )}

@@ -219,7 +219,7 @@ const SearchForm = props => {
           <Header>Search for courses</Header>
           <div style={{ marginBottom: '15px' }}>
             <Form.Group>
-              <Form.Field width={8}>
+              <Form.Field width={8} className="name-input">
                 <label>Name:</label>
                 <AutoSubmitSearchInput
                   doSearch={fetchCourses}

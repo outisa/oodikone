@@ -1,3 +1,12 @@
+## Tours
+
+This branch includes a demo of tour / onboarding functionality. All necessary code is encapsulated in the `Tour.jsx` file. Some changes that are likely needed to make this production ready:
+
+1. Can't restart tour
+2. The placements of the highlights sometime bug
+3. If we want to do the full pipeline from front page then some bigger changes are needed so we can automatically fill text fields etc.
+4. Might want to use id's instead of classNames for element selection.
+
 # oodikone
 
 [![CircleCI](https://circleci.com/gh/UniversityOfHelsinkiCS/oodikone/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/UniversityOfHelsinkiCS/oodikone)
@@ -22,13 +31,13 @@ Launch the CLI and follow the instructions:
 npm run cli
 ```
 
-*Please use a terminal at least 80 characters wide, the CLI is a bit rudimentary* 😊
+_Please use a terminal at least 80 characters wide, the CLI is a bit rudimentary_ 😊
 
 The acual oodikone can be accessed at [http://localhost:8081/](http://localhost:8081/) and Adminer at [http://localhost:5050/](http://localhost:5050/?pgsql=db&username=postgres). Adminer requires you to login with username `postgres` and password `postgres`.
 
 ### Populate Redis on Fresh Install
 
-On a fresh install some features do not work because the redis store is empty. To populate redis, navigate to [http://localhost:8081/updater](http://localhost:8081/updater), and click *Refresh Statistics*.
+On a fresh install some features do not work because the redis store is empty. To populate redis, navigate to [http://localhost:8081/updater](http://localhost:8081/updater), and click _Refresh Statistics_.
 
 ### What the CLI does
 
@@ -212,10 +221,10 @@ http://localhost:8082/v1/students?token=dev
 body
 
 ```bash
-{ 
+{
     "studentnumbers": [
         "014598456"
-    ] 
+    ]
 }
 ```
 
@@ -255,7 +264,6 @@ scp -r -o ProxyCommand="ssh -W %h:%p melkki.cs.helsinki.fi" oodikone.cs.helsinki
 > ```bash
 > scp -o ProxyCommand="ssh -W %h:%p commonuser@server1" > commonuser@server2:/<remotePath> <localpath>
 > ```
->
 
 ## Known situations and ways to handle them
 

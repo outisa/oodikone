@@ -59,7 +59,7 @@ const ResultTabs = props => {
   const renderViewModeSelector = () => {
     const isTogglePane = tab !== 0
     const getButtonMenu = () => (
-      <Menu secondary>
+      <Menu secondary className="tour-menu-attempts">
         {Object.values(viewModeNames).map(name => (
           <Menu.Item key={name} name={name} active={viewMode === name} onClick={() => handleModeChange(name)} />
         ))}

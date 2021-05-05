@@ -1,11 +1,14 @@
 import React from 'react'
-import { Container, Header, Image, Divider, List } from 'semantic-ui-react'
+import { Container, Header, Image, Divider, List, Button } from 'semantic-ui-react'
 import moment from 'moment'
 import { images } from '../common'
 import { useTitle } from '../common/hooks'
+// import { ShepherdTourContext } from 'react-shepherd'
 
 export default () => {
   useTitle()
+  //const tour = useContext(ShepherdTourContext)
+
   return (
     <div>
       <Container text style={{ paddingTop: 50 }} textAlign="justified">
@@ -17,8 +20,33 @@ export default () => {
         </Header>
 
         <Divider section />
+        {process.env.NODE_ENV === 'development' && (
+          <>
+            <Header as="h3" style={{ textAlign: 'center' }}>
+              How do I view...
+            </Header>
 
-        <Header as="h4">Study Programme</Header>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gridRowGap: '1rem',
+                maxWidth: '30rem',
+                margin: '0 auto'
+              }}
+            >
+              <Button size="medium" /*onClick={tour.start}*/>The progress of graduated students over time?</Button>
+              <Button size="medium">The statistics for a specific course?</Button>
+              <Button size="medium">The total credit gain of all faculties?</Button>
+            </div>
+
+            <Divider section />
+          </>
+        )}
+
+        <Header className="my-first-step" as="h4">
+          Study Programme
+        </Header>
         <List bulleted>
           <List.Item>
             <i>Search by Class:</i> Query a student population specified by a starting year and a study right. Oodikone
@@ -31,7 +59,9 @@ export default () => {
 
         <Divider section />
 
-        <Header as="h4">Student Statistics</Header>
+        <Header className="my-other-step" as="h4">
+          Student Statistics
+        </Header>
         <p>View detailed information for a given student.</p>
 
         <Divider section />

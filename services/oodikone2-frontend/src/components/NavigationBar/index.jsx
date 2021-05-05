@@ -94,7 +94,14 @@ const NavigationBar = props => {
   const renderNavigationRoutes = () =>
     Object.values(visibleNavigationItems).map(({ items, path, key, label, tag }) =>
       items ? (
-        <Menu.Item as={Dropdown} key={`menu-item-drop-${key}`} tabIndex="-1" text={label} data-cy={`navbar-${key}`}>
+        <Menu.Item
+          as={Dropdown}
+          key={`menu-item-drop-${key}`}
+          className={`menu-item-${key}`}
+          tabIndex="-1"
+          text={label}
+          data-cy={`navbar-${key}`}
+        >
           <Dropdown.Menu>
             {items.map(i => (
               <Dropdown.Item
@@ -110,7 +117,14 @@ const NavigationBar = props => {
           </Dropdown.Menu>
         </Menu.Item>
       ) : (
-        <Menu.Item as={NavLink} key={`menu-item-${path}`} to={path} tabIndex="-1" data-cy={`navbar-${key}`}>
+        <Menu.Item
+          as={NavLink}
+          key={`menu-item-${path}`}
+          className={`menu-item-${key}`}
+          to={path}
+          tabIndex="-1"
+          data-cy={`navbar-${key}`}
+        >
           {label}
           {tag && (
             <div style={{ position: 'absolute', top: 0, right: 17 }}>
@@ -233,6 +247,11 @@ const mapDispatchToProps = {
   logout: logoutAction
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {
-  areStatePropsEqual: isEqual
-})(NavigationBar)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  null,
+  {
+    areStatePropsEqual: isEqual
+  }
+)(NavigationBar)
