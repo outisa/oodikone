@@ -11,7 +11,6 @@ import { useTabChangeAnalytics, usePrevious } from '../../common/hooks'
 
 import { getTagsByStudytrackAction } from '../../redux/tags'
 import { getStudentTagsByStudytrackAction } from '../../redux/tagstudent'
-
 import StudentNameVisibilityToggle from '../StudentNameVisibilityToggle'
 import '../PopulationCourseStats/populationCourseStats.css'
 import SortableTable, { row } from '../SortableTable'

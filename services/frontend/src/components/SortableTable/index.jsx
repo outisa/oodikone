@@ -7,6 +7,7 @@ import FigureContainer from 'components/FigureContainer'
 import _ from 'lodash'
 import produce from 'immer'
 import { v4 as uuidv4 } from 'uuid'
+import { useDispatch, useSelector } from 'react-redux'
 import ExportModal from './ExportModal'
 import { row, group, getDataItemType, SortableTableContext, DataItemType } from './common'
 import DefaultColumnFilter from './defaultFilter'
@@ -16,6 +17,7 @@ import SortingFilteringVisitor from './SortingFilteringVisitor'
 import GroupKeyVisitor from './GroupKeyVisitor'
 import ValueVisitor from './ValueVisitor'
 import './style.css'
+import { collapseCoursesHeader } from '../../redux/settings'
 
 const getKey = data => {
   if (data.studentnumber) return data.studentnumber
@@ -302,19 +304,19 @@ const getDefaultColumnOptions = () => ({
 const ColumnHeader = ({ columnKey, displayColumnKey, ...props }) => {
   const storedState = useContextSelector(SortableTableContext, ctx => ctx.state.columnOptions[displayColumnKey])
   const colSpan = useContextSelector(SortableTableContext, ctx => ctx.columnSpans[columnKey])
-
   const state = useMemo(() => storedState ?? getDefaultColumnOptions(), [storedState])
 
   return <ColumnHeaderContent state={state} colSpan={colSpan} {...props} />
 }
 
-const ColumnHeaderContent = React.memo(({ column, colSpan, state, dispatch, rowSpan, style }) => {
+const ColumnHeaderContent = React.memo(({ column, colSpan, state, dispatch, rowSpan, style, handleCollapseClick }) => {
   const cellSize = useRef()
   const titleSize = useRef()
   const toolsSize = useRef()
   const [filterMenuOpen, setFilterMenuOpen] = useState(false)
   const [dynamicToolsMode, setToolsMode] = useState('fixed')
   const [forcedTitleWidth, setForcedTitleWidth] = useState()
+  const collapsedHeaders = useSelector(state => state?.settings?.collapsedHeaders)
 
   let toolsMode = dynamicToolsMode
 
@@ -401,10 +403,18 @@ const ColumnHeaderContent = React.memo(({ column, colSpan, state, dispatch, rowS
     />
   )
 
+  const collapseHeaders = column => {
+    if (collapsedHeaders.length !== 0) {
+      return collapsedHeaders.find(h => h === column.parent?.textTitle || h === column.textTitle)
+    }
+    return false
+  }
+
   return (
     <th
       colSpan={colSpan}
       rowSpan={rowSpan}
+      scope="col"
       className={filterMenuOpen ? 'filter-menu-open' : 'filter-menu-closed'}
       style={{
         ...style,
@@ -412,14 +422,17 @@ const ColumnHeaderContent = React.memo(({ column, colSpan, state, dispatch, rowS
         verticalAlign: column.vertical ? 'top' : 'center',
         position: 'relative',
         overflow: toolsMode === 'floating' ? 'hidden' : '',
-        display: toolsMode === 'none' ? 'none' : '',
+        background: collapseHeaders(column) ? 'red' : '',
       }}
-      onClick={() => {
-        if (sortable) {
+      onClick={e => {
+        if (sortable && column.parent) {
           dispatch({
             type: 'TOGGLE_COLUMN_SORT',
             payload: { column: filterColumnKey },
           })
+        } else {
+          e.preventDefault()
+          handleCollapseClick(column)
         }
       }}
     >
@@ -563,7 +576,7 @@ const resolveDisplayColumn = column => {
   return resolveDisplayColumn(displayColumn)
 }
 
-const createHeaders = (columns, columnDepth, dispatch) => {
+const createHeaders = (columns, columnDepth, dispatch, settingsDispatch) => {
   let stack = _.clone(columns)
 
   const rows = _.range(0, columnDepth).map(() => [])
@@ -598,6 +611,11 @@ const createHeaders = (columns, columnDepth, dispatch) => {
     if (!column.noHeader) {
       const displayColumn = resolveDisplayColumn(column)
 
+      const handleCollapseClick = column => {
+        const columnHeader = column.parent ? column.parent.textTitle : column.textTitle
+        settingsDispatch(collapseCoursesHeader(columnHeader))
+      }
+
       rows[currentDepth].push(
         <ColumnHeader
           key={column.key}
@@ -607,6 +625,7 @@ const createHeaders = (columns, columnDepth, dispatch) => {
           style={style}
           column={displayColumn}
           dispatch={dispatch}
+          handleCollapseClick={handleCollapseClick}
         />
       )
     }
@@ -819,11 +838,15 @@ const SortableTable = ({
   expandedGroups,
 }) => {
   const [exportModalOpen, setExportModalOpen] = useState(false)
+  const collapsedHeaders = useSelector(state => state?.settings?.collapsedHeaders)
+
   const [state, dispatch] = useReducer(
     tableStateReducer(defaultSort),
     null,
     getInitialState(defaultSort, expandedGroups)
   )
+  const settingsDispatch = useDispatch()
+
   const groupDepth = useMemo(() => calculateGroupDepth(data), [data])
 
   const toggleGroup = useCallback(
@@ -882,7 +905,7 @@ const SortableTable = ({
     [data, columnsByKey]
   )
 
-  const headers = useMemo(() => createHeaders(columns, columnDepth, dispatch), [columns, columnDepth])
+  const headers = useMemo(() => createHeaders(columns, columnDepth, dispatch, settingsDispatch), [columns, columnDepth])
 
   const sortedData = useMemo(
     () => SortingFilteringVisitor.mutate(data, columnsByKey, state, ColumnFilters),
@@ -921,9 +944,17 @@ const SortableTable = ({
   if (figure) {
     classNames.push('basic')
   }
-
   const content = (
     <table className={classNames.join(' ')} id={tableId} style={tableStyles}>
+      <colgroup>
+        {columns.map(c => (
+          <col
+            className={c.textTitle}
+            span={c.children?.length}
+            style={collapsedHeaders?.find(h => h === c.textTitle) ? { visibility: 'hidden', width: 0 } : {}}
+          />
+        ))}
+      </colgroup>
       <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>{headers}</thead>
       <tbody>
         {sortedData.map(item => (

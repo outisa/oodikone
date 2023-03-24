@@ -4,6 +4,7 @@ import { DEFAULT_LANG } from '../constants'
 const initial = () => ({
   language: DEFAULT_LANG,
   namesVisible: false,
+  collapsedHeaders: [],
   studentlistVisible: false,
   chartHeight: 600,
 })
@@ -48,6 +49,17 @@ const reducer = (state = initial(), action) => {
         ...state,
         studentlistVisible: !state.studentlistVisible,
       }
+    case 'MODIFY_COURSES_COLLAPSED_HEADERS':
+      if (state.collapsedHeaders.find(h => h === action.headerName)) {
+        return {
+          ...state,
+          collapsedHeaders: state.collapsedHeaders.filter(h => h !== action.headerName),
+        }
+      }
+      return {
+        ...state,
+        collapsedHeaders: state.collapsedHeaders.concat(action.headerName),
+      }
     case 'SET_CHART_HEIGHT':
       return {
         ...state,
@@ -83,5 +95,12 @@ export const toggleStudentNameVisibility = () => ({
 export const toggleStudentListVisibility = () => ({
   type: 'TOGGLE_STUDENT_LIST_VISIBILITY',
 })
+
+export const collapseCoursesHeader = headerName => {
+  return {
+    type: 'MODIFY_COURSES_COLLAPSED_HEADERS',
+    headerName,
+  }
+}
 
 export default reducer
